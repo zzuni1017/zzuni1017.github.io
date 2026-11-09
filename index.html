@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>조선대학교 셔틀 · 구글 지도 관리자 데모</title>
+<style>
+:root{--blue:#3268f5;--navy:#17243b;--muted:#738098;--line:#e4eaf2;--bg:#f3f6fb}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--navy);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo",sans-serif}main{max-width:1280px;margin:auto;padding:22px}header{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}h1{font-size:22px;margin:0 0 5px}.sub,.muted{font-size:12px;color:var(--muted)}.brand{display:flex;align-items:center;gap:12px}.logo{height:46px;width:46px;border-radius:15px;background:var(--blue);display:grid;place-items:center;color:#fff;font-size:24px}.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.role{font-size:12px;font-weight:bold;padding:9px 12px;border-radius:30px;background:#e5f8ed;color:#147747}.role.admin{background:#fff0d8;color:#8a5100}button{border:0;border-radius:11px;padding:11px 13px;font-weight:700;font-size:12px;cursor:pointer}.primary{background:var(--blue);color:white}.secondary{background:#e9eef6;color:#35445a}.danger{background:#ffebeb;color:#ad2525}.small{padding:8px 10px}.grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(300px,.85fr);gap:18px}.card{background:#fff;border:1px solid var(--line);border-radius:19px;overflow:hidden;box-shadow:0 7px 24px #14213a08}.head{padding:17px 19px;border-bottom:1px solid #e8edf3;display:flex;align-items:center;justify-content:space-between;gap:10px}.head b{font-size:15px}.mapwrap{position:relative;background:#e8edf2;height:620px}.mapcanvas{width:100%;height:100%}.tag{position:absolute;left:14px;top:14px;padding:10px 12px;background:#fffffff0;border:1px solid #e2e8ef;border-radius:12px;font-size:12px;z-index:2;pointer-events:none}.side{display:flex;flex-direction:column;gap:18px}.pad{padding:19px}.bus{display:flex;align-items:center;gap:12px;margin:16px 0}.busico{height:52px;width:52px;background:#e9efff;border-radius:16px;display:grid;place-items:center;font-size:26px}.eta{margin-left:auto;text-align:right;color:var(--blue);font-size:25px;font-weight:bold}.eta small{display:block;font-size:11px;color:var(--muted);font-weight:normal}.row{display:flex;justify-content:space-between;border-top:1px solid #e8edf3;padding:11px 0;font-size:12px}.row span{color:var(--muted)}.buttons{display:flex;gap:8px;margin-top:12px}.buttons button:first-child{flex:1}.stop{display:flex;align-items:center;gap:10px;padding:12px 7px;border-bottom:1px solid #edf0f5;border-radius:9px}.stop:last-child{border:0}.dot{width:13px;height:13px;border:3px solid var(--blue);border-radius:50%;flex-shrink:0}.dot.active{background:var(--blue);box-shadow:0 0 0 4px #3268f51a}.stopname{font-size:13px;font-weight:bold}.stopdesc{font-size:11px;color:var(--muted);margin-top:4px}.stopeta{margin-left:auto;color:var(--blue);font-size:12px;font-weight:bold}.stop button{margin-left:3px}.adminpanel{display:none;margin-bottom:18px;border:1px solid #f0d9ad;background:#fffaf1;border-radius:16px;padding:15px}.adminpanel.show{display:block}.adminhead{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}.adminhead strong{font-size:14px}.adminhelp{font-size:12px;color:#805b1a;line-height:1.6;margin:8px 0 12px}.admincontrols{display:flex;gap:8px;flex-wrap:wrap}.status{font-size:12px;color:var(--muted);margin-top:10px}.notice{font-size:11px;line-height:1.6;color:#79551a;background:#fff7e7;border:1px solid #ffedc2;border-radius:12px;padding:12px;margin-top:14px}.foot{text-align:center;color:#8994a6;font-size:11px;margin:17px}.modalback{display:none;position:fixed;inset:0;background:#101a2bb8;z-index:10;align-items:center;justify-content:center;padding:18px}.modalback.show{display:flex}.modal{background:white;border-radius:18px;padding:22px;width:min(390px,100%);box-shadow:0 20px 70px #0003}.modal h2{margin:0 0 8px;font-size:19px}.modal p{font-size:12px;color:var(--muted);line-height:1.6}.modal input{width:100%;padding:12px;border:1px solid #d8e0eb;border-radius:10px;font-size:16px;margin:8px 0 12px}.modalbuttons{display:flex;gap:8px}.modalbuttons button{flex:1}.keybox{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px 14px;background:#fff;border-bottom:1px solid var(--line);font-size:12px}.keybox input{flex:1;min-width:200px;padding:9px;border:1px solid #d8e0eb;border-radius:8px}.maperror{position:absolute;inset:50px 20px auto;background:#fff;border:1px solid #f0caca;color:#9b2727;padding:14px;border-radius:12px;z-index:3;display:none;font-size:12px;line-height:1.6}
+@media(max-width:850px){main{padding:12px}.grid{grid-template-columns:1fr}.mapwrap{height:520px}.head{padding:14px}.actions{justify-content:flex-end}.brand h1{font-size:19px}}
+</style></head><body><main>
+<header><div class="brand"><div class="logo">🚌</div><div><h1>조선대학교 셔틀</h1><div class="sub">Chosun University · Google 지도 · Firebase 실시간 공유 데모</div></div></div><div class="actions"><span class="role" id="roleBadge">● 일반 사용자</span><button class="secondary" id="loginBtn">관리자 로그인</button></div></header>
+<section class="adminpanel" id="adminPanel"><div class="adminhead"><strong>⚙ 관리자 모드 · 노선 편집</strong><div class="admincontrols"><button class="primary small" id="addStopBtn">지도 클릭해 정류장 추가</button><button class="secondary small" id="renameBtn">선택 정류장 이름 변경</button><button class="danger small" id="deleteStopBtn">선택 정류장 삭제</button><button class="primary small" id="saveBtn">변경 사항 저장</button><button class="secondary small" id="logoutBtn">로그아웃</button></div></div><div class="adminhelp" id="adminHelp">관리자 모드에서는 정류장 마커를 드래그해 위치를 옮기고, 지도 클릭으로 정류장을 추가할 수 있어.</div><div class="status" id="saveStatus">변경 사항은 이 브라우저에 저장돼. 다른 기기에는 자동 공유되지 않아.</div></section>
+
+<section class="card" style="margin-bottom:18px">
+  <div class="head"><div><b>실시간 공유 연결 설정</b><div class="sub" style="margin-top:5px">시연에 참여하는 모든 기기에서 같은 Firebase 프로젝트 설정을 사용해.</div></div><span class="sub" id="firebaseStatus">Firebase 연결 전</span></div>
+  <div class="pad" style="display:grid;gap:10px">
+    <label class="muted" for="firebaseConfig">Firebase 웹 앱 설정 (Firebase 콘솔의 SDK 설정에서 복사)</label>
+    <textarea id="firebaseConfig" rows="5" style="width:100%;padding:10px;border:1px solid #d8e0eb;border-radius:9px;font:12px/1.5 monospace" placeholder='{"apiKey":"...","authDomain":"...","databaseURL":"https://프로젝트-default-rtdb.firebaseio.com","projectId":"...","appId":"..."}'></textarea>
+    <label class="muted" for="adminUid">관리자 계정 UID (Firebase Authentication에서 확인)</label>
+    <input id="adminUid" placeholder="관리자 이메일 계정의 UID" style="width:100%;padding:10px;border:1px solid #d8e0eb;border-radius:9px">
+    <div class="actions">
+      <button class="primary" id="connectFirebaseBtn">Firebase 연결</button>
+      <button class="secondary" id="copyRulesBtn">보안 규칙 복사</button>
+    </div>
+    <div class="muted" style="line-height:1.7">
+      <b>초기 설정 순서</b><br>
+      1) Firebase 프로젝트 생성 → 웹 앱 추가 → 설정 객체 복사<br>
+      2) Realtime Database 생성, Authentication에서 이메일/비밀번호 로그인 사용 설정<br>
+      3) Authentication에서 관리자 이메일 계정 생성 후 UID를 위에 입력<br>
+      4) 아래 보안 규칙을 Realtime Database 규칙에 적용한 뒤 모든 접속 기기에서 Firebase 연결
+    </div>
+    <div class="notice" style="margin-top:0">Firebase 웹 설정값은 브라우저에 공개되는 값이야. 데이터 쓰기 권한은 반드시 아래 보안 규칙으로 제한해야 해. 관리자 UID를 비워 두면 관리자 로그인이 활성화되지 않아.</div>
+  </div>
+</section>
+<div class="grid"><section class="card"><div class="head"><div><b id="mapTitle">조선대학교 캠퍼스 지도</b><div class="sub" style="margin-top:5px">광주광역시 동구 필문대로 309 · 7개 정류장 순환 노선</div></div><span class="sub" id="clock">지도 연결 대기</span></div><div class="keybox"><label for="clientKey">Google Maps API Key</label><input id="clientKey" placeholder="발급받은 Google Maps API Key 입력"><button class="primary small" id="loadMapBtn">지도 연결</button><span class="muted">각 기기에서 API 키 입력 필요</span></div><div class="mapwrap"><div id="googleMap" class="mapcanvas"></div><div class="tag">📍 조선대학교 본관 순환 노선<br><span class="sub">설립기념탑 → 미대 → 중앙도서관 → 공대 제2공학관 → 법대·경상대 → 본관 북쪽 → 학생회관 → 설립기념탑</span></div><div class="maperror" id="mapError"></div></div></section>
+<aside class="side"><section class="card pad"><b>현재 운행 정보</b><div class="bus"><div class="busico">🚌</div><div><b>순환 셔틀 01</b><div class="muted" id="busState">정상 운행 · 데모 데이터</div></div><div class="eta" id="eta">3분<small>선택 정류장 도착 예상</small></div></div><div class="row"><span>혼잡도</span><b id="crowd">보통 · 55%</b></div><div class="row"><span>위치 갱신</span><b>시뮬레이션</b></div><div class="row"><span>데이터 모드</span><b>가상 시뮬레이션</b></div><div class="buttons"><button class="primary" id="toggleBtn">운행 일시정지</button><button class="secondary" id="refreshBtn" title="페이지 새로고침" aria-label="페이지 새로고침">새로고침</button><button class="secondary" id="resetBtn">초기화</button></div></section><section class="card pad"><b>정류장 목록</b><div class="sub" style="margin-top:5px" id="listHelp">정류장을 선택해 도착 정보를 확인해.</div><div id="stopList"></div><div class="notice"><b>실제 운행 적용 전 확인</b><br>정류장 좌표는 지도에 표시하기 위한 초기 참고값이야. 실제 정차 지점과 일치하는지 현장에서 확인하고 보정해야 해. 버스 위치·도착 시간은 현재 가상 시뮬레이션이며 실제 GPS와 연결되어 있지 않아.</div></section></aside></div><div class="foot">Google Maps JavaScript API · Firebase 실시간 공유 시연용 (실제 GPS 미연동)</div></main>
+<div class="modalback" id="loginModal"><div class="modal"><h2>관리자 로그인</h2><p>Firebase Authentication에 등록한 관리자 이메일과 비밀번호를 입력해.</p><input id="emailInput" type="email" autocomplete="username" placeholder="관리자 이메일"><input id="passwordInput" type="password" autocomplete="current-password" placeholder="비밀번호"><div class="modalbuttons"><button class="secondary" id="cancelLogin">취소</button><button class="primary" id="submitLogin">로그인</button></div><p id="loginError" style="color:#b42318;display:none"></p><p>관리자 권한은 Firebase 보안 규칙에서도 확인해. 브라우저 화면의 버튼 표시만으로 권한을 보호하지 않아.</p></div></div>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
+<script>
+// Google Maps + Firebase Realtime Database 공유 시연용 데모입니다.
+const initialStops=[
+{id:1,name:'설립기념탑',lat:35.14261,lng:126.92830},
+{id:2,name:'미대',lat:35.14295,lng:126.92975},
+{id:3,name:'중앙도서관',lat:35.14272,lng:126.93165},
+{id:4,name:'공대 제2공학관',lat:35.14155,lng:126.93305},
+{id:5,name:'법대·경상대',lat:35.14095,lng:126.93455},
+{id:6,name:'본관 북쪽',lat:35.14205,lng:126.93430},
+{id:7,name:'학생회관',lat:35.14310,lng:126.93360}
+];
+let stops=loadStops(),selected=0,admin=false,addMode=false,running=true,seg=0,p=0,ticks=0,timer=null,map=null,markers=[],routeLine=null,busMarker=null,apiLoading=false;
+let firebaseReady=false,db=null,auth=null,adminUid='',stateRef=null,lastRemoteWrite=0;
+const STATE_PATH='shuttleDemo/state';
+const $=id=>document.getElementById(id);
+function loadStops(){try{let v=JSON.parse(localStorage.getItem('chosunShuttleStops'));if(Array.isArray(v)&&v.length>=2)return v}catch(e){}return initialStops.map(x=>({...x}))}
+
+function save(){
+  localStorage.setItem('chosunShuttleStops',JSON.stringify(stops));
+  $('saveStatus').textContent='정류장 저장 완료 · '+new Date().toLocaleTimeString('ko-KR');
+  if(firebaseReady && admin) publishState();
+}
+function setFirebaseStatus(msg,isError=false){$('firebaseStatus').textContent=msg;$('firebaseStatus').style.color=isError?'#b42318':'#147747'}
+function connectFirebase(){
+  let config;
+  try{config=JSON.parse($('firebaseConfig').value.trim())}catch(e){setFirebaseStatus('설정 JSON 형식 오류',true);alert('Firebase 웹 앱 설정을 JSON 형식으로 붙여 넣어 줘.');return}
+  if(!config.apiKey||!config.databaseURL||!config.projectId||!config.appId){setFirebaseStatus('필수 설정값 누락',true);alert('apiKey, databaseURL, projectId, appId 값이 필요해.');return}
+  adminUid=$('adminUid').value.trim();
+  localStorage.setItem('chosunFirebaseConfig',JSON.stringify(config));
+  localStorage.setItem('chosunAdminUid',adminUid);
+  try{
+    if(!firebase.apps.length)firebase.initializeApp(config);
+    else if(firebase.app().options.projectId!==config.projectId){alert('이미 다른 Firebase 프로젝트가 연결되어 있어. 페이지를 새로고침한 뒤 올바른 설정으로 연결해 줘.');return}
+    auth=firebase.auth();db=firebase.database();stateRef=db.ref(STATE_PATH);firebaseReady=true;
+    setFirebaseStatus('Firebase 연결됨 · 실시간 수신 대기');
+    $('saveStatus').textContent='Firebase 연결 완료. 관리자는 로그인해 시연을 시작할 수 있어.';
+    stateRef.on('value',snapshot=>{
+      if(!snapshot.exists())return;
+      if(admin)return;
+      const data=snapshot.val();
+      if(Array.isArray(data.stops)&&data.stops.length>=2)stops=data.stops;
+      seg=Number(data.seg)||0;p=Number(data.p)||0;ticks=Number(data.ticks)||0;
+      running=!!data.running;
+      localStorage.setItem('chosunShuttleStops',JSON.stringify(stops));
+      renderAll();positionBus();
+      $('busState').textContent=running?'정상 운행 · 관리자 시연 중':'일시정지 · 관리자 시연 중';
+      $('saveStatus').textContent='관리자 기기의 실시간 위치를 수신 중 · '+new Date().toLocaleTimeString('ko-KR');
+    },err=>{setFirebaseStatus('데이터 수신 실패: '+err.message,true)});
+    auth.onAuthStateChanged(user=>{
+      admin=!!(user&&adminUid&&user.uid===adminUid);
+      renderAll();
+      if(admin){setFirebaseStatus('관리자 인증 완료 · 위치 전송 가능');publishState()}
+      else if(user){setFirebaseStatus('일반 접속 · 읽기 전용');}
+      else{setFirebaseStatus('일반 접속 · 읽기 전용');}
+    });
+  }catch(e){firebaseReady=false;setFirebaseStatus('연결 실패: '+e.message,true)}
+}
+function publishState(){
+  if(!firebaseReady||!admin||!stateRef)return;
+  const payload={stops,seg,p,ticks,running,updatedAt:Date.now()};
+  stateRef.set(payload).then(()=>{setFirebaseStatus('실시간 공유 중 · '+new Date().toLocaleTimeString('ko-KR'))})
+    .catch(err=>{setFirebaseStatus('전송 실패: '+err.message,true)});
+}
+function copySecurityRules(){
+  const uid=$('adminUid').value.trim();
+  if(!uid){alert('먼저 관리자 UID를 입력해 줘.');return}
+  const rules={rules:{shuttleDemo:{state:{".read":true,".write":"auth != null && auth.uid === '"+uid+"'"}}}};
+  const value=JSON.stringify(rules,null,2);
+  if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(value).then(()=>alert('Firebase 보안 규칙을 복사했어. Realtime Database → 규칙에 붙여 넣어 줘.')).catch(()=>prompt('아래 규칙을 복사해 줘.',value));
+  else prompt('아래 규칙을 복사해 줘.',value);
+}
+
+function setError(msg){$('mapError').textContent=msg;$('mapError').style.display='block'}
+function loadGoogleMap(){const key=$('clientKey').value.trim();if(!key){setError('Google Cloud Console에서 발급한 Maps JavaScript API 키를 입력해 주세요.');return}localStorage.setItem('chosunGoogleMapKey',key);$('mapError').style.display='none';if(window.google?.maps){initMap();return}if(apiLoading)return;apiLoading=true;const old=document.getElementById('googleSdk');if(old)old.remove();const s=document.createElement('script');s.id='googleSdk';s.src='https://maps.googleapis.com/maps/api/js?key='+encodeURIComponent(key)+'&callback=initGoogleMap&v=weekly';s.async=true;s.defer=true;s.onerror=()=>{apiLoading=false;setError('Google Maps를 불러오지 못했어. API 키, Maps JavaScript API 활성화, 결제 계정, HTTP referrer 제한 및 인터넷 연결을 확인해 줘.')};document.head.appendChild(s)}
+window.initGoogleMap=()=>{apiLoading=false;initMap()};
+function initMap(){if(!window.google?.maps){setError('Google Maps SDK가 준비되지 않았어. API 키를 확인해 줘.');return}map=new google.maps.Map(document.getElementById('googleMap'),{center:{lat:35.14235,lng:126.93215},zoom:16,minZoom:14,maxZoom:20,zoomControl:true,mapTypeControl:true,streetViewControl:false,fullscreenControl:true});renderAll();positionBus();$('clock').textContent='지도 연결 완료';map.addListener('click',e=>{if(!admin||!addMode)return;const name=prompt('새 정류장 이름','새 정류장');if(name&&name.trim()){stops.push({id:Math.max(0,...stops.map(s=>s.id))+1,name:name.trim(),lat:e.latLng.lat(),lng:e.latLng.lng()});selected=stops.length-1;renderAll();$('saveStatus').textContent='정류장이 추가됐어. 저장 버튼을 눌러 적용해.'}addMode=false;$('googleMap').style.cursor='default'})}
+function renderStops(){if(!map||!window.google?.maps)return;markers.forEach(m=>m.setMap(null));markers=[];stops.forEach((s,i)=>{const marker=new google.maps.Marker({position:{lat:s.lat,lng:s.lng},map,title:s.name,draggable:admin,label:{text:String(i+1),color:'#ffffff',fontWeight:'700'},icon:{path:google.maps.SymbolPath.CIRCLE,scale:13,fillColor:i===selected?'#174ea6':'#3268f5',fillOpacity:1,strokeColor:'#ffffff',strokeWeight:3}});const info=new google.maps.InfoWindow({content:'<b>'+escapeHtml(s.name)+'</b>'});marker.addListener('click',()=>{selected=i;renderAll();$('mapTitle').textContent=s.name+' · 정류장 위치';info.open({anchor:marker,map})});if(admin)marker.addListener('dragend',()=>{const pos=marker.getPosition();stops[i].lat=pos.lat();stops[i].lng=pos.lng();$('saveStatus').textContent='정류장 위치가 변경됐어. 저장 버튼을 눌러 적용해.';updateRoute()});markers.push(marker)});updateRoute();renderList()}
+function escapeHtml(v){return String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function updateRoute(){if(!map||!window.google?.maps)return;const path=stops.map(s=>({lat:s.lat,lng:s.lng}));if(path.length>1)path.push(path[0]);if(routeLine)routeLine.setMap(null);routeLine=new google.maps.Polyline({map,path,strokeColor:'#3268f5',strokeOpacity:.9,strokeWeight:6});}
+function renderList(){const list=$('stopList');list.replaceChildren();stops.forEach((s,i)=>{const row=document.createElement('div');row.className='stop';row.style.background=i===selected?'#f4f7ff':'white';row.innerHTML=`<i class="dot ${i===selected?'active':''}"></i><div style="min-width:0"><div class="stopname"></div><div class="stopdesc">${admin?'관리자: 마커를 드래그해 위치 이동':'본관 순환 노선'}</div></div><span class="stopeta">${Math.max(1,Math.round((i+1)*1.8))}분</span>`;row.querySelector('.stopname').textContent=s.name;row.onclick=()=>{selected=i;renderAll();if(map){map.panTo({lat:s.lat,lng:s.lng});map.setZoom(17)}$('mapTitle').textContent=s.name+' · 정류장 위치'};if(admin){const edit=document.createElement('button');edit.className='secondary small';edit.textContent='이름';edit.onclick=e=>{e.stopPropagation();renameStop(i)};row.append(edit)}list.append(row)})}
+function renderAll(){renderStops();updateEta();$('roleBadge').textContent=admin?'◆ 관리자 모드':'● 일반 사용자';$('roleBadge').className='role'+(admin?' admin':'');$('loginBtn').textContent=admin?'관리자 로그아웃':'관리자 로그인';$('adminPanel').classList.toggle('show',admin);$('listHelp').textContent=admin?'관리자: 정류장을 선택하거나 지도 마커를 드래그해 위치를 변경해.':'정류장을 선택해 도착 정보를 확인해.';$('toggleBtn').disabled=!admin;$('resetBtn').disabled=!admin;$('toggleBtn').style.opacity=admin?'1':'.5';$('resetBtn').style.opacity=admin?'1':'.5'}
+function positionBus(){if(!map||!window.google?.maps||!stops.length)return;const a=stops[seg%stops.length],b=stops[(seg+1)%stops.length];const pos={lat:a.lat+(b.lat-a.lat)*p,lng:a.lng+(b.lng-a.lng)*p};if(!busMarker)busMarker=new google.maps.Marker({map,position:pos,title:'셔틀버스 01',label:{text:'🚌',fontSize:'20px'}});else busMarker.setPosition(pos)}
+function updateEta(){let m=Math.max(1,Math.round((stops.length-seg%Math.max(1,stops.length)+selected)/1.3));$('eta').innerHTML=m+'분<small>'+((stops[selected]||stops[0]).name)+' 도착 예상</small>';$('clock').textContent='갱신 '+new Date().toLocaleTimeString('ko-KR');let c=[35,48,55,68,82,42][Math.floor(ticks/4)%6];$('crowd').textContent=(c>70?'혼잡':c>45?'보통':'여유')+' · '+c+'%'}
+function tick(){if(!admin||!running||stops.length<2)return;p+=.055;if(p>=1){p=0;seg=(seg+1)%stops.length}ticks++;positionBus();updateEta();if(ticks%2===0)publishState()}
+function renameStop(i){let name=prompt('정류장 이름을 입력해',stops[i]?.name||'');if(name&&name.trim()){stops[i].name=name.trim();renderAll();$('saveStatus').textContent='이름이 변경됐어. 저장 버튼을 눌러 적용해.'}}
+function setAdmin(v){admin=v;addMode=false;renderAll();$('adminHelp').textContent=admin?'관리자 계정 인증 완료. 버스 시뮬레이션과 노선 편집이 가능해.':'관리자 모드가 종료됐어.'}
+$('refreshBtn').onclick=()=>window.location.reload();
+$('loadMapBtn').onclick=loadGoogleMap;$('clientKey').value=localStorage.getItem('chosunGoogleMapKey')||'';
+$('firebaseConfig').value=localStorage.getItem('chosunFirebaseConfig')||'';
+$('adminUid').value=localStorage.getItem('chosunAdminUid')||'';
+$('connectFirebaseBtn').onclick=connectFirebase;$('copyRulesBtn').onclick=copySecurityRules;
+$('loginBtn').onclick=()=>{if(admin){if(auth)auth.signOut();setAdmin(false);return}if(!firebaseReady){alert('먼저 Firebase 연결 설정을 완료해 줘.');return}$('loginModal').classList.add('show');$('emailInput').value='';$('passwordInput').value='';$('loginError').style.display='none';$('emailInput').focus()};
+$('cancelLogin').onclick=()=>$('loginModal').classList.remove('show');
+$('submitLogin').onclick=async()=>{try{if(!auth)throw new Error('Firebase가 연결되지 않았어.');await auth.signInWithEmailAndPassword($('emailInput').value.trim(),$('passwordInput').value);$('loginModal').classList.remove('show')}catch(e){$('loginError').textContent='로그인 실패: '+e.message;$('loginError').style.display='block'}};
+$('passwordInput').addEventListener('keydown',e=>{if(e.key==='Enter')$('submitLogin').click()});
+$('logoutBtn').onclick=()=>{if(auth)auth.signOut();setAdmin(false)};
+$('addStopBtn').onclick=()=>{if(!map){alert('먼저 Google 지도를 연결해 줘.');return}addMode=!addMode;$('adminHelp').textContent=addMode?'지도에서 새 정류장을 놓을 위치를 클릭해.':'정류장 추가 모드가 취소됐어.';$('googleMap').style.cursor=addMode?'crosshair':'default'};
+$('renameBtn').onclick=()=>{if(stops[selected])renameStop(selected)};$('deleteStopBtn').onclick=()=>{if(stops.length<=2){alert('노선에는 최소 2개 정류장이 필요해.');return}if(confirm('선택한 정류장을 삭제할까?')){stops.splice(selected,1);selected=Math.max(0,selected-1);seg=0;renderAll();positionBus();$('saveStatus').textContent='정류장이 삭제됐어. 저장 버튼을 눌러 적용해.'}};$('saveBtn').onclick=save;
+$('toggleBtn').onclick=()=>{if(!admin){alert('관리자만 운행을 조작할 수 있어.');return}running=!running;$('toggleBtn').textContent=running?'운행 일시정지':'운행 재개';$('busState').textContent=running?'정상 운행 · 관리자 시연 중':'일시정지 · 관리자 시연 중';publishState()};
+$('resetBtn').onclick=()=>{if(!admin){alert('관리자만 초기화할 수 있어.');return}if(!confirm('정류장을 기본 조선대학교 노선으로 초기화할까?'))return;stops=initialStops.map(s=>({...s}));localStorage.removeItem('chosunShuttleStops');selected=0;seg=0;p=0;ticks=0;running=true;$('toggleBtn').textContent='운행 일시정지';$('busState').textContent='정상 운행 · 데모 데이터';renderAll();positionBus();if(timer)clearInterval(timer);timer=setInterval(tick,1000);$('saveStatus').textContent='기본 조선대학교 노선으로 초기화했어.';publishState()};
+renderAll();timer=setInterval(tick,1000);
+if($('clientKey').value.trim())loadGoogleMap();
+if($('firebaseConfig').value.trim()&&$('adminUid').value.trim())connectFirebase();
+</script></body></html>
